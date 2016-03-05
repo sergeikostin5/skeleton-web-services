@@ -5,6 +5,7 @@ import org.example.service.GreetingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,8 @@ import java.util.Collection;
 /**
  * Created by sergeikostin on 3/4/16.
  */
+
+@Profile("batch") // Tells Spring that this component is part of the batch profile, it will not be loaded if it is not specified as active --spring.profiles.active=batch
 @Component // Spring's component scanner registers this class with application initialization
 public class GreetingBatchBean {
 
@@ -21,7 +24,7 @@ public class GreetingBatchBean {
     @Autowired
     private GreetingService greetingService;
 
-//    @Scheduled(cron = "0,30 * * * * *")
+    @Scheduled(cron = "${batch.greeting.cron}")
     public void cronJob(){
         logger.info("> cronJob");
 
@@ -32,8 +35,8 @@ public class GreetingBatchBean {
         logger.info("< cronJob");
     }
 
-//    @Scheduled(initialDelay = 5000,
-//                fixedRate = 15000)
+    @Scheduled(initialDelayString = "${batch.greeting.initialDelay}",
+                fixedRateString = "${batch.greeting.fixedRate}")
     public void fixedRateJobWithInitialDelay(){
         logger.info("> fixedRateJobWithInitialDelay");
 
