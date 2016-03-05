@@ -1,7 +1,11 @@
 package org.example.api;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.example.model.Greeting;
+import org.example.service.EmailService;
 import org.example.service.GreetingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 /**
  * Created by sergeikostin on 3/1/16.
@@ -19,6 +24,7 @@ import java.util.Map;
 @RestController
 public class GreetingController {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // Use @Autowired annotation to tell spring to inject instance of GreetingService
     // into the controller class. Always use interface type for dependency injection rather than
@@ -26,6 +32,9 @@ public class GreetingController {
     // public methods are exposed by the GreetingService Interface and available to the service client
     @Autowired
     private GreetingService greetingService;
+
+    @Autowired
+    private EmailService emailService;
 
 
     @RequestMapping(
@@ -78,6 +87,41 @@ public class GreetingController {
     public ResponseEntity<Greeting> deleteGreeting(@PathVariable("id") Long id){
         greetingService.delete(id);
         return new ResponseEntity<Greeting>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(
+            value = "/api/greeting/{id}/send",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Greeting> sendGreeting(@PathVariable("id") Long id,
+                                                 @RequestParam(value = "wait", defaultValue = "false") boolean waitForAsyncResult){
+
+        logger.info("> sendGreeting");
+
+        Greeting greeting = null;
+
+        try{
+            greeting = greetingService.findOne(id);
+            if(greeting == null){
+                logger.info("<sendGreeting");
+                return new ResponseEntity<Greeting>(HttpStatus.NOT_FOUND);
+            }
+
+            if(waitForAsyncResult){
+                Future<Boolean> asyncResponse = emailService.sendAsyncForResult(greeting);
+                boolean emailSent = asyncResponse.get();
+                logger.info("- greeting email sent? {}", emailSent);
+            }else{
+                emailService.sendAsync(greeting);
+            }
+        }catch(Exception ex){
+            logger.error("A problem occured sending the Greeting.", ex);
+            return new ResponseEntity<Greeting>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        logger.info("< sendGreeting");
+        return new ResponseEntity<Greeting>(greeting, HttpStatus.OK);
     }
 
 

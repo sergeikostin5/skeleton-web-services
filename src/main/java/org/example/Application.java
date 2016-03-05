@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.guava.GuavaCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement //Tells Spring to enable transaction management support within the application and search the code for transaction boundaries
 @EnableCaching // This informs Spring to enable cache management support within the application and search code base for methods annotated with cache management meta data
 @EnableScheduling // Tells Spring to search code base for methods annotated with scheduling metadata
+@EnableAsync // This instructs Spring to search code base for methods tagged with asynchronous task metadata
 public class Application
 {
     public static void main( String[] args ) throws Exception
