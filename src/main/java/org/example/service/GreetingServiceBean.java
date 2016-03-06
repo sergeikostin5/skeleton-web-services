@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,10 +56,10 @@ public class GreetingServiceBean implements GreetingService {
         }
         Greeting savedGreeting = greetingRepository.save(greeting);
 
-        // Illustrate Tx rollback
-        if(savedGreeting.getId() == 4L){
-            throw new RuntimeException("Roll me back");
-        }
+//        // Illustrate Tx rollback
+//        if(savedGreeting.getId() == 4L){
+//            throw new RuntimeException("Roll me back");
+//        }
         return savedGreeting;
     }
 
@@ -71,7 +72,7 @@ public class GreetingServiceBean implements GreetingService {
         Greeting greetingPersisted = findOne(greeting.getId());
         if(greetingPersisted == null){
             //Can not update greeting that has not been persisted
-            return null;
+            throw new NoResultException();
         }
 
         Greeting updatedGreeting = greetingRepository.save(greeting);
