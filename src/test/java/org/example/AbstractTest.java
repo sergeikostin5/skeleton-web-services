@@ -12,6 +12,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class) //Informs Spring which class to use when executing unit tests
 @SpringApplicationConfiguration(
         classes = Application.class) //facilitates startup Spring Boot application for test runner, it will start it using main Application class
-public class AbstractTest {
+public abstract class AbstractTest {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 }

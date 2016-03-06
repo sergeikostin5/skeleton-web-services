@@ -21,8 +21,6 @@ public class GreetingServiceTest extends AbstractTest {
     @Autowired
     private GreetingService service;
 
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Before
     public void setUp(){
         service.evictCache();
