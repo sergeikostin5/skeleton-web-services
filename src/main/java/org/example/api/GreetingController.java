@@ -22,7 +22,7 @@ import java.util.concurrent.Future;
  * Created by sergeikostin on 3/1/16.
  */
 @RestController
-public class GreetingController {
+public class GreetingController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.api.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,6 +28,10 @@ public abstract class AbstractControllerTest extends AbstractTest  {
     // make mvc attribute aware of all application components
     protected void setUp(){
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
+    protected void setUp(BaseController controller){
+        mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     // endpoints receive and consume JSON data
