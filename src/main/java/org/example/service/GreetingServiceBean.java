@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.model.Greeting;
 import org.example.repository.GreetingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,8 +31,12 @@ public class GreetingServiceBean implements GreetingService {
     @Autowired
     private GreetingRepository greetingRepository;
 
+    @Autowired
+    private CounterService counterService;
+
     @Override
     public Collection<Greeting> findAll() {
+        counterService.increment("method.invoked.greetingService.findAll");
         Collection<Greeting> greetings = greetingRepository.findAll();
         return greetings;
     }
@@ -40,6 +45,7 @@ public class GreetingServiceBean implements GreetingService {
     @Cacheable(value = "greetings",
                 key="#id")
     public Greeting findOne(Long id) {
+        counterService.increment("method.invoked.greetingService.findOne");
         Greeting greeting = greetingRepository.findOne(id);
         return greeting;
     }
@@ -50,6 +56,7 @@ public class GreetingServiceBean implements GreetingService {
     @CachePut(value = "greetings",
                 key = "#result.id")
     public Greeting create(Greeting greeting) {
+        counterService.increment("method.invoked.greetingService.create");
         if(greeting.getId() != null){
             // Can not create Greeting with specified id value
             return null;
@@ -69,6 +76,7 @@ public class GreetingServiceBean implements GreetingService {
     @CachePut(value = "greetings",
             key = "#greeting.id")
     public Greeting update(Greeting greeting) {
+        counterService.increment("method.invoked.greetingService.update");
         Greeting greetingPersisted = findOne(greeting.getId());
         if(greetingPersisted == null){
             //Can not update greeting that has not been persisted
@@ -85,6 +93,7 @@ public class GreetingServiceBean implements GreetingService {
     @CacheEvict(value = "greetings",
                 key = "#id")
     public void delete(Long id) {
+        counterService.increment("method.invoked.greetingService.delete");
         greetingRepository.delete(id);
     }
 
