@@ -24,8 +24,6 @@ import java.util.concurrent.Future;
 @RestController
 public class GreetingController extends BaseController {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     // Use @Autowired annotation to tell spring to inject instance of GreetingService
     // into the controller class. Always use interface type for dependency injection rather than
     // implementation of the class. This follows programming by contract model and ensures that only
